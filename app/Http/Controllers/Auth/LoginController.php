@@ -127,13 +127,21 @@ class LoginController extends Controller
                     $user = new User();
                     \Log::debug(json_encode($saml->getAttributes()));
                     \Log::debug(json_encode($saml->getAttributes()["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"]));
-                    $user->first_name = explode($saml->getAttributes()["name"])[0];
-                    $user->last_name = explode($saml->getAttributes()["name"])[1];
+                    $user->first_name = explode($saml->getAttributes()["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"])[0];
+                    $user->last_name = explode($saml->getAttributes()["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"])[1];
                     $user->username = $username;
-                    $user->email = $saml->getAttributes()["email"];
+                    $user->email = $saml->getAttributes()["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"];
                     $user->password = $user->noPassword();
 
                     $user->activated = 1;
+
+                    if (in_array("assets-admin", $saml->getAttributes()["http://schemas.xmlsoap.org/claims/Group"])) {
+                        $user->groups()->attach(1); //ADMIN
+                    } elseif (in_array("assets-manager", $saml->getAttributes()["http://schemas.xmlsoap.org/claims/Group"])) {
+                        $user->groups()->attach(2); //MANAGER
+                    } else {
+                        $user->groups()->attach(3); //USER
+                    }
 
                     if (!$user->save()) {
                         \Log::debug('Could not create user.'.$user->getErrors());
