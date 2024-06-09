@@ -103,6 +103,7 @@ class LoginController extends Controller
      */
     private function loginViaSaml(Request $request)
     {
+        $settings = Setting::getSettings();
         $saml = $this->saml;
         $samlData = $request->session()->get('saml_login');
 
@@ -119,15 +120,22 @@ class LoginController extends Controller
                 }
                 Log::debug("okay, fine, this is a new nonce then. Good for you.");
                 if (!is_null($user)) {
-                    $user->groups()->detach(1);
-                    $user->groups()->detach(2);
-                    $user->groups()->detach(3);
-                    if (in_array("assets-admin", $saml->getAttributes()["http://schemas.xmlsoap.org/claims/Group"])) {
-                        $user->groups()->attach(1); //ADMIN
-                    } elseif (in_array("assets-manager", $saml->getAttributes()["http://schemas.xmlsoap.org/claims/Group"])) {
-                        $user->groups()->attach(2); //MANAGER
+                    if (in_array($settings->saml_admin_saml_group, $saml->getAttributes()[$settings->saml_group_attribute]) || $settings->saml_admin_saml_group == "") {
+                        $user->groups()->attach($settings->saml_admin_snipe_group); //ADMIN
                     } else {
-                        $user->groups()->attach(3); //USER
+                        $user->groups()->detach($settings->saml_admin_snipe_group); //ADMIN
+                    }
+                    
+                    if (in_array($settings->saml_manager_saml_group, $saml->getAttributes()[$settings->saml_group_attribute]) || $settings->saml_manager_saml_group == "") {
+                        $user->groups()->attach($settings->saml_manager_snipe_group); //MANAGER
+                    } else {
+                        $user->groups()->detach($settings->saml_manager_snipe_group); //ADMIN
+                    }
+                    
+                    if (in_array($settings->saml_user_saml_group, $saml->getAttributes()[$settings->saml_group_attribute]) || $settings->saml_user_saml_group == "") {
+                        $user->groups()->attach($settings->saml_user_snipe_group); //USER
+                    } else {
+                        $user->groups()->detach($settings->saml_user_snipe_group); //ADMIN
                     }
 
                     Auth::login($user);
@@ -136,12 +144,10 @@ class LoginController extends Controller
                     \Log::debug("Creating SAML user '$username'.");
 
                     $user = new User();
-                    \Log::debug(json_encode($saml->getAttributes()));
-                    \Log::debug(json_encode($saml->getAttributes()["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"]));
-                    $user->first_name = explode(" ", $saml->getAttributes()["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"][0])[0];
-                    $user->last_name = explode(" ", $saml->getAttributes()["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"][0])[1];
+                    $user->first_name = explode(" ", $saml->getAttributes()[$settings->saml_name_attribute][0])[0];
+                    $user->last_name = explode(" ", $saml->getAttributes()[$settings->saml_name_attribute][0])[1];
                     $user->username = $username;
-                    $user->email = $saml->getAttributes()["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"][0];
+                    $user->email = $saml->getAttributes()[$settings->saml_email_attribute][0];
                     $user->password = $user->noPassword();
 
                     $user->activated = 1;
@@ -153,12 +159,22 @@ class LoginController extends Controller
                         throw new Exception('Could not create user: '.$user->getErrors());
                     }
 
-                    if (in_array("assets-admin", $saml->getAttributes()["http://schemas.xmlsoap.org/claims/Group"])) {
-                        $user->groups()->attach(1); //ADMIN
-                    } elseif (in_array("assets-manager", $saml->getAttributes()["http://schemas.xmlsoap.org/claims/Group"])) {
-                        $user->groups()->attach(2); //MANAGER
+                    if (in_array($settings->saml_admin_saml_group, $saml->getAttributes()[$settings->saml_group_attribute]) || $settings->saml_admin_saml_group == "") {
+                        $user->groups()->attach($settings->saml_admin_snipe_group); //ADMIN
                     } else {
-                        $user->groups()->attach(3); //USER
+                        $user->groups()->detach($settings->saml_admin_snipe_group); //ADMIN
+                    }
+                    
+                    if (in_array($settings->saml_manager_saml_group, $saml->getAttributes()[$settings->saml_group_attribute]) || $settings->saml_manager_saml_group == "") {
+                        $user->groups()->attach($settings->saml_manager_snipe_group); //MANAGER
+                    } else {
+                        $user->groups()->detach($settings->saml_manager_snipe_group); //ADMIN
+                    }
+                    
+                    if (in_array($settings->saml_user_saml_group, $saml->getAttributes()[$settings->saml_group_attribute]) || $settings->saml_user_saml_group == "") {
+                        $user->groups()->attach($settings->saml_user_snipe_group); //USER
+                    } else {
+                        $user->groups()->detach($settings->saml_user_snipe_group); //ADMIN
                     }
 
                     $request->session()->flash('error', trans('auth/message.signin.error'));
