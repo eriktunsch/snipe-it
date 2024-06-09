@@ -119,15 +119,16 @@ class LoginController extends Controller
                 }
                 Log::debug("okay, fine, this is a new nonce then. Good for you.");
                 if (!is_null($user)) {
-                    /* if (in_array("assets-admin", $saml->getAttributes()["http://schemas.xmlsoap.org/claims/Group"])) {
-                         $user->groups()->attach(1); //ADMIN
-                     } elseif (in_array("assets-manager", $saml->getAttributes()["http://schemas.xmlsoap.org/claims/Group"])) {
-                         $user->groups()->attach(2); //MANAGER
-                     } else {
-                         $user->groups()->attach(3); //USER
-                     }*/
-
-
+                    $user->groups()->detach(1);
+                    $user->groups()->detach(2);
+                    $user->groups()->detach(3);
+                    if (in_array("assets-admin", $saml->getAttributes()["http://schemas.xmlsoap.org/claims/Group"])) {
+                        $user->groups()->attach(1); //ADMIN
+                    } elseif (in_array("assets-manager", $saml->getAttributes()["http://schemas.xmlsoap.org/claims/Group"])) {
+                        $user->groups()->attach(2); //MANAGER
+                    } else {
+                        $user->groups()->attach(3); //USER
+                    }
 
                     Auth::login($user);
                 } else {
