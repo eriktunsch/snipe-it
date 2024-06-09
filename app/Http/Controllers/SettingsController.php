@@ -1038,6 +1038,10 @@ class SettingsController extends Controller
         $setting->saml_user_snipe_group = $request->input('saml_user_snipe_group');
         $setting->saml_user_saml_group = $request->input('saml_user_saml_group');
 
+        $setting->saml_group_attribute = $request->input('saml_group_attribute');
+        $setting->saml_name_attribute = $request->input('saml_name_attribute');
+        $setting->saml_email_attribute = $request->input('saml_email_attribute');
+
         if ($setting->save()) {
             return redirect()->route('settings.saml.index')
                 ->with('success', trans('admin/settings/message.update.success'));
