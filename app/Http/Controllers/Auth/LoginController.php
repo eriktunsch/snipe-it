@@ -122,7 +122,24 @@ class LoginController extends Controller
                     Auth::login($user);
                 } else {
                     $username = $saml->getUsername();
-                    \Log::debug("SAML user '$username' could not be found in database.");
+                    \Log::debug("Creating SAML user '$username'.");
+//TODO:
+                    $user = new User;
+                    $user->first_name = explode($saml->getAttributes["name"])[0];
+                    $user->last_name = explode($saml->getAttributes["name"])[1];
+                    $user->username = $username;
+                    $user->email = $saml->getAttributes["email"];
+                    $user->password = $user->noPassword();
+
+                    $user->activated = 1;
+        
+                    if ($user->save()) {
+                        return $user;
+                    } else {
+                        \Log::debug('Could not create user.'.$user->getErrors());
+                        throw new Exception('Could not create user: '.$user->getErrors());
+                    }
+
                     $request->session()->flash('error', trans('auth/message.signin.error'));
                     $saml->clearData();
                 }
