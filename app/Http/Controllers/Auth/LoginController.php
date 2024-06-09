@@ -120,22 +120,20 @@ class LoginController extends Controller
                 }
                 Log::debug("okay, fine, this is a new nonce then. Good for you.");
                 if (!is_null($user)) {
+                    $user->groups()->detach($settings->saml_admin_snipe_group);
+                    $user->groups()->detach($settings->saml_manager_snipe_group);
+                    $user->groups()->detach($settings->saml_user_snipe_group);
+
                     if (in_array($settings->saml_admin_saml_group, $saml->getAttributes()[$settings->saml_group_attribute]) || $settings->saml_admin_saml_group == "") {
                         $user->groups()->attach($settings->saml_admin_snipe_group); //ADMIN
-                    } else {
-                        $user->groups()->detach($settings->saml_admin_snipe_group); //ADMIN
                     }
-                    
+
                     if (in_array($settings->saml_manager_saml_group, $saml->getAttributes()[$settings->saml_group_attribute]) || $settings->saml_manager_saml_group == "") {
                         $user->groups()->attach($settings->saml_manager_snipe_group); //MANAGER
-                    } else {
-                        $user->groups()->detach($settings->saml_manager_snipe_group); //ADMIN
                     }
                     
                     if (in_array($settings->saml_user_saml_group, $saml->getAttributes()[$settings->saml_group_attribute]) || $settings->saml_user_saml_group == "") {
                         $user->groups()->attach($settings->saml_user_snipe_group); //USER
-                    } else {
-                        $user->groups()->detach($settings->saml_user_snipe_group); //ADMIN
                     }
 
                     Auth::login($user);
@@ -159,22 +157,20 @@ class LoginController extends Controller
                         throw new Exception('Could not create user: '.$user->getErrors());
                     }
 
+                    $user->groups()->detach($settings->saml_admin_snipe_group);
+                    $user->groups()->detach($settings->saml_manager_snipe_group);
+                    $user->groups()->detach($settings->saml_user_snipe_group);
+
                     if (in_array($settings->saml_admin_saml_group, $saml->getAttributes()[$settings->saml_group_attribute]) || $settings->saml_admin_saml_group == "") {
                         $user->groups()->attach($settings->saml_admin_snipe_group); //ADMIN
-                    } else {
-                        $user->groups()->detach($settings->saml_admin_snipe_group); //ADMIN
                     }
-                    
+
                     if (in_array($settings->saml_manager_saml_group, $saml->getAttributes()[$settings->saml_group_attribute]) || $settings->saml_manager_saml_group == "") {
                         $user->groups()->attach($settings->saml_manager_snipe_group); //MANAGER
-                    } else {
-                        $user->groups()->detach($settings->saml_manager_snipe_group); //ADMIN
                     }
                     
                     if (in_array($settings->saml_user_saml_group, $saml->getAttributes()[$settings->saml_group_attribute]) || $settings->saml_user_saml_group == "") {
                         $user->groups()->attach($settings->saml_user_snipe_group); //USER
-                    } else {
-                        $user->groups()->detach($settings->saml_user_snipe_group); //ADMIN
                     }
 
                     $request->session()->flash('error', trans('auth/message.signin.error'));
