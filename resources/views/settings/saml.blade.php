@@ -140,16 +140,16 @@
                                 {{ Form::label('saml_name_attribute', "SAML Name Attribute") }}
                             </div>
                             <div class="col-md-9">
-                                {{ Form::text('saml_group_attribute', old('saml_name_attribute', $setting->saml_name_attribute), ['class' => 'form-control','placeholder' => '', $setting->demoMode]) }}
+                                {{ Form::text('saml_name_attribute', old('saml_name_attribute', $setting->saml_name_attribute), ['class' => 'form-control','placeholder' => '', $setting->demoMode]) }}
                             </div>
                         </div>
 
                         <div class="form-group {{ $errors->has('saml_email_attribute') ? 'error' : '' }}">
                             <div class="col-md-3">
-                                {{ Form::label('saml_name_attribute', "SAML EMail Attribute") }}
+                                {{ Form::label('saml_email_attribute', "SAML EMail Attribute") }}
                             </div>
                             <div class="col-md-9">
-                                {{ Form::text('saml_group_attribute', old('saml_email_attribute', $setting->saml_email_attribute), ['class' => 'form-control','placeholder' => '', $setting->demoMode]) }}
+                                {{ Form::text('saml_email_attribute', old('saml_email_attribute', $setting->saml_email_attribute), ['class' => 'form-control','placeholder' => '', $setting->demoMode]) }}
                             </div>
                         </div>
 
