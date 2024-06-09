@@ -119,6 +119,16 @@ class LoginController extends Controller
                 }
                 Log::debug("okay, fine, this is a new nonce then. Good for you.");
                 if (!is_null($user)) {
+                    /* if (in_array("assets-admin", $saml->getAttributes()["http://schemas.xmlsoap.org/claims/Group"])) {
+                         $user->groups()->attach(1); //ADMIN
+                     } elseif (in_array("assets-manager", $saml->getAttributes()["http://schemas.xmlsoap.org/claims/Group"])) {
+                         $user->groups()->attach(2); //MANAGER
+                     } else {
+                         $user->groups()->attach(3); //USER
+                     }*/
+
+
+
                     Auth::login($user);
                 } else {
                     $username = $saml->getUsername();
@@ -135,17 +145,19 @@ class LoginController extends Controller
 
                     $user->activated = 1;
 
+
+
+                    if (!$user->save()) {
+                        \Log::debug('Could not create user.'.$user->getErrors());
+                        throw new Exception('Could not create user: '.$user->getErrors());
+                    }
+
                     if (in_array("assets-admin", $saml->getAttributes()["http://schemas.xmlsoap.org/claims/Group"])) {
                         $user->groups()->attach(1); //ADMIN
                     } elseif (in_array("assets-manager", $saml->getAttributes()["http://schemas.xmlsoap.org/claims/Group"])) {
                         $user->groups()->attach(2); //MANAGER
                     } else {
                         $user->groups()->attach(3); //USER
-                    }
-
-                    if (!$user->save()) {
-                        \Log::debug('Could not create user.'.$user->getErrors());
-                        throw new Exception('Could not create user: '.$user->getErrors());
                     }
 
                     $request->session()->flash('error', trans('auth/message.signin.error'));
