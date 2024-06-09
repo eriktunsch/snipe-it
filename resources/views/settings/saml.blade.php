@@ -128,6 +128,141 @@
                             </div>
                         </div>
 
+                                                <div class="form-group{{ $errors->has('group') ? ' has-error' : '' }}">
+                            <div class="col-md-3">
+                                {{ Form::label('saml_admin_snipe_group', "Admin Group") }}
+                            </div>
+
+                            <div class="col-md-8">
+
+                                @if ($groups->count())
+                                    @if ((Config::get('app.lock_passwords') || (!Auth::user()->isSuperUser())))
+                                        <ul>
+                                            @foreach ($groups as $id => $group)
+                                                {!! '<li>'.e($group).'</li>' !!}
+                                            @endforeach
+                                        </ul>
+
+
+                                        <span class="help-block">{{ trans('admin/users/general.group_memberships_helpblock') }}</span>
+                                    @else
+                                        <div class="controls">
+                                            <select name="saml_admin_snipe_group" aria-label="saml_admin_snipe_group" id="saml_admin_snipe_group" class="form-control select2">
+                                                <option value="">{{ trans('admin/settings/general.no_default_group') }}</option>
+                                                @foreach ($groups as $id => $group)
+                                                    <option value="{{ $id }}" {{ $setting->saml_admin_snipe_group == $id ? 'selected' : '' }}>
+                                                        {{ $group }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    @endif
+                                @else
+                                    <p>No groups have been created yet. Visit <code>Admin Settings > Permission Groups</code> to add one.</p>
+                                @endif
+
+                            </div>
+                        </div>
+
+                        <div class="form-group {{ $errors->has('saml_admin_saml_group') ? 'error' : '' }}">
+                            <div class="col-md-3">
+                                {{ Form::label('saml_admin_saml_group', "Admin SAML Group") }}
+                            </div>
+                            <div class="col-md-9">
+                                {{ Form::text('saml_admin_saml_group', old('saml_admin_saml_group', $setting->saml_admin_saml_group), ['class' => 'form-control','placeholder' => '', $setting->demoMode]) }}
+                            </div>
+                        </div>
+
+                        <div class="form-group{{ $errors->has('group') ? ' has-error' : '' }}">
+                            <div class="col-md-3">
+                                {{ Form::label('saml_manager_snipe_group', "Manager Group") }}
+                            </div>
+
+                            <div class="col-md-8">
+
+                                @if ($groups->count())
+                                    @if ((Config::get('app.lock_passwords') || (!Auth::user()->isSuperUser())))
+                                        <ul>
+                                            @foreach ($groups as $id => $group)
+                                                {!! '<li>'.e($group).'</li>' !!}
+                                            @endforeach
+                                        </ul>
+
+
+                                        <span class="help-block">{{ trans('admin/users/general.group_memberships_helpblock') }}</span>
+                                    @else
+                                        <div class="controls">
+                                            <select name="saml_manager_snipe_group" aria-label="saml_manager_snipe_group" id="saml_manager_snipe_group" class="form-control select2">
+                                                <option value="">{{ trans('admin/settings/general.no_default_group') }}</option>
+                                                @foreach ($groups as $id => $group)
+                                                    <option value="{{ $id }}" {{ $setting->saml_manager_snipe_group == $id ? 'selected' : '' }}>
+                                                        {{ $group }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    @endif
+                                @else
+                                    <p>No groups have been created yet. Visit <code>Admin Settings > Permission Groups</code> to add one.</p>
+                                @endif
+
+                            </div>
+                        </div>
+
+                        <div class="form-group {{ $errors->has('saml_manager_saml_group') ? 'error' : '' }}">
+                            <div class="col-md-3">
+                                {{ Form::label('saml_manager_saml_group', "Manager SAML Group") }}
+                            </div>
+                            <div class="col-md-9">
+                                {{ Form::text('saml_manager_saml_group', old('saml_manager_saml_group', $setting->saml_manager_saml_group), ['class' => 'form-control','placeholder' => '', $setting->demoMode]) }}
+                            </div>
+                        </div>
+
+                        <div class="form-group{{ $errors->has('group') ? ' has-error' : '' }}">
+                            <div class="col-md-3">
+                                {{ Form::label('saml_user_snipe_group', "User Group") }}
+                            </div>
+
+                            <div class="col-md-8">
+
+                                @if ($groups->count())
+                                    @if ((Config::get('app.lock_passwords') || (!Auth::user()->isSuperUser())))
+                                        <ul>
+                                            @foreach ($groups as $id => $group)
+                                                {!! '<li>'.e($group).'</li>' !!}
+                                            @endforeach
+                                        </ul>
+
+
+                                        <span class="help-block">{{ trans('admin/users/general.group_memberships_helpblock') }}</span>
+                                    @else
+                                        <div class="controls">
+                                            <select name="saml_user_snipe_group" aria-label="saml_user_snipe_group" id="saml_user_snipe_group" class="form-control select2">
+                                                <option value="">{{ trans('admin/settings/general.no_default_group') }}</option>
+                                                @foreach ($groups as $id => $group)
+                                                    <option value="{{ $id }}" {{ $setting->saml_user_snipe_group == $id ? 'selected' : '' }}>
+                                                        {{ $group }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    @endif
+                                @else
+                                    <p>No groups have been created yet. Visit <code>Admin Settings > Permission Groups</code> to add one.</p>
+                                @endif
+
+                            </div>
+                        </div>
+
+                        <div class="form-group {{ $errors->has('saml_user_saml_group') ? 'error' : '' }}">
+                            <div class="col-md-3">
+                                {{ Form::label('saml_user_saml_group', "User SAML Group") }}
+                            </div>
+                            <div class="col-md-9">
+                                {{ Form::text('saml_user_saml_group', old('saml_user_saml_group', $setting->saml_user_saml_group), ['class' => 'form-control','placeholder' => '', $setting->demoMode]) }}
+                            </div>
+                        </div>
+
                         <!-- SAML Force Login -->
                         <div class="form-group">
                             <div class="col-md-3">
