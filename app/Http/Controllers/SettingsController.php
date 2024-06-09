@@ -639,11 +639,11 @@ class SettingsController extends Controller
                 ->whereNull('deleted_at')
                 ->update(
                     ['next_audit_date' => DB::raw('DATE_ADD(next_audit_date, INTERVAL '.$audit_diff_months.' MONTH)')]
-            );
+                );
 
             \Log::debug($affected .' assets affected by audit interval update');
 
-            
+
         }
 
         $alert_email = rtrim($request->input('alert_email'), ',');
@@ -914,7 +914,7 @@ class SettingsController extends Controller
             'ldap_username_field' => 'not_in:sAMAccountName',
             'ldap_auth_filter_query' => 'not_in:uid=samaccountname|required_if:ldap_enabled,1',
             'ldap_filter' => 'nullable|regex:"^[^(]"|required_if:ldap_enabled,1',
-        ],  $messages);
+        ], $messages);
 
 
 
@@ -995,7 +995,9 @@ class SettingsController extends Controller
     {
         $setting = Setting::getSettings();
 
-        return view('settings.saml', compact('setting'));
+        $groups = Group::pluck('name', 'id');
+
+        return view('settings.saml', compact('setting', 'groups'));
     }
 
     /**
@@ -1038,7 +1040,7 @@ class SettingsController extends Controller
     }
     public static function getPDFBranding()
     {
-        $pdf_branding= Setting::getSettings();
+        $pdf_branding = Setting::getSettings();
 
         return $pdf_branding;
     }
@@ -1114,11 +1116,11 @@ class SettingsController extends Controller
                         'filesize' => Setting::fileSizeConvert(Storage::size($backup_files[$f])),
                         'modified_value' => $file_timestamp,
                         'modified_display' => date($settings->date_display_format.' '.$settings->time_display_format, $file_timestamp),
-                        
+
                     ];
                 }
 
-               
+
             }
         }
 
@@ -1199,7 +1201,7 @@ class SettingsController extends Controller
      */
     public function deleteFile($filename = null)
     {
-        if (config('app.allow_backup_delete')=='true') {
+        if (config('app.allow_backup_delete') == 'true') {
 
             if (!config('app.lock_passwords')) {
                 $path = 'app/backups';
@@ -1237,7 +1239,8 @@ class SettingsController extends Controller
      * @return Redirect
      */
 
-    public function postUploadBackup(Request $request) {
+    public function postUploadBackup(Request $request)
+    {
 
         if (! config('app.lock_passwords')) {
             if (!$request->hasFile('file')) {
@@ -1251,11 +1254,11 @@ class SettingsController extends Controller
 
                 if ($validator->passes()) {
 
-                        $upload_filename = 'uploaded-'.date('U').'-'.Str::slug(pathinfo($request->file('file')->getClientOriginalName(), PATHINFO_FILENAME)).'.zip';
+                    $upload_filename = 'uploaded-'.date('U').'-'.Str::slug(pathinfo($request->file('file')->getClientOriginalName(), PATHINFO_FILENAME)).'.zip';
 
-                        Storage::putFileAs('app/backups', $request->file('file'), $upload_filename);
-            
-                        return redirect()->route('settings.backups.index')->with('success', 'File uploaded');
+                    Storage::putFileAs('app/backups', $request->file('file'), $upload_filename);
+
+                    return redirect()->route('settings.backups.index')->with('success', 'File uploaded');
                 }
 
                 return redirect()->route('settings.backups.index')->withErrors($validator);
@@ -1264,10 +1267,10 @@ class SettingsController extends Controller
 
         } else {
             return redirect()->route('settings.backups.index')->with('error', trans('general.feature_disabled'));
-        }    
+        }
 
-        
-        
+
+
     }
 
     /**
@@ -1281,7 +1284,7 @@ class SettingsController extends Controller
      */
     public function postRestore($filename = null)
     {
-        
+
         if (! config('app.lock_passwords')) {
             $path = 'app/backups';
 
@@ -1300,12 +1303,14 @@ class SettingsController extends Controller
                 \Log::debug('Attempting to restore from: '. storage_path($path).'/'.$filename);
 
                 // run the restore command
-                Artisan::call('snipeit:restore', 
-                [
-                    '--force' => true, 
-                    '--no-progress' => true, 
+                Artisan::call(
+                    'snipeit:restore',
+                    [
+                    '--force' => true,
+                    '--no-progress' => true,
                     'filename' => storage_path($path).'/'.$filename
-                ]);
+                ]
+                );
 
                 // If it's greater than 300, it probably worked
                 $output = Artisan::output();
@@ -1317,8 +1322,8 @@ class SettingsController extends Controller
                 \Log::debug($migrate_output);
 
                 $find_user = DB::table('users')->where('username', $user->username)->exists();
-                
-                if (!$find_user){
+
+                if (!$find_user) {
                     \Log::warning('Attempting to restore user: ' . $user->username);
                     $new_user = $user->replicate();
                     $new_user->push();
@@ -1333,7 +1338,7 @@ class SettingsController extends Controller
                 \Auth::logout();
 
                 return redirect()->route('login')->with('success', 'Your system has been restored. Please login again.');
-                
+
             } else {
                 return redirect()->route('settings.backups.index')->with('error', trans('admin/settings/message.backup.file_not_found'));
             }
@@ -1356,7 +1361,7 @@ class SettingsController extends Controller
 
         \Log::warning('User '.Auth::user()->username.' (ID'.Auth::user()->id.') is attempting a PURGE');
 
-        if (config('app.allow_purge')=='true') {
+        if (config('app.allow_purge') == 'true') {
             return view('settings.purge-form');
         }
 
@@ -1377,12 +1382,12 @@ class SettingsController extends Controller
     {
         \Log::warning('User '.Auth::user()->username.' (ID'.Auth::user()->id.') is attempting a PURGE');
 
-        if (config('app.allow_purge')=='true') {
+        if (config('app.allow_purge') == 'true') {
             \Log::debug('Purging is not allowed via the .env');
 
             if (!config('app.lock_passwords')) {
 
-                if ($request->input('confirm_purge')=='DELETE') {
+                if ($request->input('confirm_purge') == 'DELETE') {
 
                     \Log::warning('User ID ' . Auth::user()->id . ' initiated a PURGE!');
                     // Run a backup immediately before processing
