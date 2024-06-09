@@ -126,7 +126,7 @@
                     </div>
                 </div>
 
-                <div class="form-group {{ $errors->has('saml_group_attribute) ? 'error' : '' }}">
+                <div class="form-group {{ $errors->has('saml_group_attribute') ? 'error' : '' }}">
                             <div class="col-md-3">
                                 {{ Form::label('saml_group_attribute', "SAML Group Attribute") }}
                             </div>
@@ -135,7 +135,7 @@
                             </div>
                         </div>
 
-                        <div class="form-group {{ $errors->has('saml_name_attribute) ? 'error' : '' }}">
+                        <div class="form-group {{ $errors->has('saml_name_attribute') ? 'error' : '' }}">
                             <div class="col-md-3">
                                 {{ Form::label('saml_group_attribute', "SAML Name Attribute") }}
                             </div>
@@ -144,7 +144,7 @@
                             </div>
                         </div>
 
-                        <div class="form-group {{ $errors->has('saml_email_attribute) ? 'error' : '' }}">
+                        <div class="form-group {{ $errors->has('saml_email_attribute') ? 'error' : '' }}">
                             <div class="col-md-3">
                                 {{ Form::label('saml_group_attribute', "SAML EMail Attribute") }}
                             </div>
