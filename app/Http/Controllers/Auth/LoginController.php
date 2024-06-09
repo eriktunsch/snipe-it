@@ -125,10 +125,10 @@ class LoginController extends Controller
                     \Log::debug("Creating SAML user '$username'.");
 //TODO:
                     $user = new User;
-                    $user->first_name = explode($saml->getAttributes["name"])[0];
-                    $user->last_name = explode($saml->getAttributes["name"])[1];
+                    $user->first_name = explode($saml->getAttributes()["name"])[0];
+                    $user->last_name = explode($saml->getAttributes()["name"])[1];
                     $user->username = $username;
-                    $user->email = $saml->getAttributes["email"];
+                    $user->email = $saml->getAttributes()["email"];
                     $user->password = $user->noPassword();
 
                     $user->activated = 1;
