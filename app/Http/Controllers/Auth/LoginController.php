@@ -127,8 +127,8 @@ class LoginController extends Controller
                     $user = new User();
                     \Log::debug(json_encode($saml->getAttributes()));
                     \Log::debug(json_encode($saml->getAttributes()["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"]));
-                    $user->first_name = explode($saml->getAttributes()["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"])[0];
-                    $user->last_name = explode($saml->getAttributes()["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"])[1];
+                    $user->first_name = explode(" ", $saml->getAttributes()["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"])[0];
+                    $user->last_name = explode(" ", $saml->getAttributes()["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"])[1];
                     $user->username = $username;
                     $user->email = $saml->getAttributes()["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"];
                     $user->password = $user->noPassword();
